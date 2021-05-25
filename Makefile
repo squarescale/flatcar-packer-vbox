@@ -1,13 +1,13 @@
 PACKER_CMD ?= packer
-RELEASE ?= alpha
-VERSION ?= current
-DIGEST_URL ?= https://$(RELEASE).release.flatcar-linux.net/amd64-usr/current/flatcar_production_iso_image.iso.DIGESTS
+RELEASE ?= stable
+VERSION ?= 2765.2.5
+DIGEST_URL ?= https://$(RELEASE).release.flatcar-linux.net/amd64-usr/$(VERSION)/flatcar_production_iso_image.iso.DIGESTS
 CONFIG ?= flatcar-linux-config.yml
 DISK_SIZE ?= 40000
 MEMORY ?= 2048M
 BOOT_WAIT ?= 45s
 CT_DOWNLOAD_URL ?= https://github.com/coreos/container-linux-config-transpiler/releases/download
-CT_VER ?= v0.7.0
+CT_VER ?= v0.9.0
 ARCH ?= $(shell uname -m)
 HEADLESS ?= false
 
