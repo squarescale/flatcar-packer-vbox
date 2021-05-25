@@ -10,13 +10,19 @@ CT_DOWNLOAD_URL ?= https://github.com/coreos/container-linux-config-transpiler/r
 CT_VER ?= v0.9.0
 ARCH ?= $(shell uname -m)
 HEADLESS ?= false
+PASSWORD ?= packer
 
 flatcar-linux: builds/flatcar-$(RELEASE)-$(VERSION)-virtualbox.box
 
 builds/flatcar-$(RELEASE)-$(VERSION)-virtualbox.box:
 	$(eval ISO_CHECKSUM := $(shell curl -s "$(DIGEST_URL)" | grep "flatcar_production_iso_image.iso" | awk '{ print length, $$1 | "sort -rg"}' | awk 'NR == 1 { print $$2 }'))
 
-	ct -pretty -in-file $(CONFIG) -out-file ignition.json
+	# Please note that other password hashing methods described at
+	# https://kinvolk.io/docs/flatcar-container-linux/latest/provisioning/cl-config/examples/#generating-a-password-hash
+	# do not work and therefore steps after reboot will fail as no SSH connection can be done
+	$(eval PASSWORD_HASH := $(shell echo "$(PASSWORD)" | openssl passwd -1 -stdin -quiet))
+
+	sed -e "s?PASSWORD_HASH?$(shell echo "$(PASSWORD)" | openssl passwd -1 -stdin -quiet | sed -e 's/\$$/\\$$/g')?" $(CONFIG) | ct -pretty -out-file ignition.json
 
 	$(PACKER_CMD) build -force \
 		-var 'flatcar_channel=$(RELEASE)' \
@@ -27,6 +33,7 @@ builds/flatcar-$(RELEASE)-$(VERSION)-virtualbox.box:
 		-var 'memory=$(MEMORY)' \
 		-var 'boot_wait=$(BOOT_WAIT)' \
 		-var 'headless=$(HEADLESS)' \
+		-var 'core_user_password=$(PASSWORD)' \
 		flatcar-linux.json
 
 clean:

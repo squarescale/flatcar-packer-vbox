@@ -5,28 +5,30 @@
         "disk_size": "40000",
         "memory": "2048",
         "boot_wait": "25s",
-        "headless": "false"
+        "headless": "false",
+        "core_user_password": "packer"
     },
 
     "builders": [
         {
             "type": "virtualbox-iso",
             "guest_os_type": "Linux_64",
-            "iso_url": "https://{{user `flatcar_channel` }}.release.flatcar-linux.net/amd64-usr/{{user `flatcar_version` }}/flatcar_production_iso_image.iso",
-            "iso_checksum": "file:https://{{user `flatcar_channel` }}.release.flatcar-linux.net/amd64-usr/{{user `flatcar_version` }}/flatcar_production_iso_image.iso.DIGESTS",
+            "iso_url": "https://{{ user `flatcar_channel` }}.release.flatcar-linux.net/amd64-usr/{{ user `flatcar_version` }}/flatcar_production_iso_image.iso",
+            "iso_checksum": "file:https://{{ user `flatcar_channel` }}.release.flatcar-linux.net/amd64-usr/{{ user `flatcar_version` }}/flatcar_production_iso_image.iso.DIGESTS",
             "output_directory": "builds",
             "shutdown_command": "sudo shutdown now",
             "disk_size": "{{ user `disk_size` }}",
             "memory": "{{ user `memory` }}",
-            "boot_wait": "{{user `boot_wait` }}",
+            "boot_wait": "{{ user `boot_wait` }}",
             "ssh_username": "core",
-            "ssh_password": "packer",
+            "ssh_password": "{{ user `core_user_password` }}",
             "headless": "{{ user `headless` }}",
             "boot_command": [
-                "sudo passwd core<enter><wait>",
-                "packer<enter>",
-                "packer<enter>",
-                "sudo systemctl start sshd.service<enter>"
+                "sudo -i <enter>",
+                "passwd core<enter><wait>",
+                "{{ user `core_user_password` }}<enter>",
+                "{{ user `core_user_password` }}<enter>",
+                "systemctl start sshd.service<enter>"
             ]
         }
     ],
@@ -39,8 +41,12 @@
         },
         {
             "type": "shell",
+            "pause_after": "60s",
             "inline": [
-                "sudo flatcar-install -d /dev/sda -V {{ user `flatcar_version` }} -C {{ user `flatcar_channel` }} -i /tmp/ignition.json"
+                "sudo flatcar-install -d /dev/sda -V {{ user `flatcar_version` }} -C {{ user `flatcar_channel` }} -i /tmp/ignition.json",
+                "sudo nohup shutdown -r now < /dev/null > /dev/null 2>&1 &",
+                "echo Rebooting...",
+                "exit 0"
             ]
         }
     ],
@@ -49,7 +55,7 @@
         {
             "type": "vagrant",
             "keep_input_artifact": true,
-            "output": "builds/flatcar-{{user `flatcar_channel`}}-{{user `flatcar_version`}}-{{.Provider}}.box",
+            "output": "builds/flatcar-{{ user `flatcar_channel` }}-{{ user `flatcar_version` }}-{{ .Provider }}.box",
             "vagrantfile_template": "Vagrantfile.template"
         }
     ]
