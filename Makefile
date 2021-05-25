@@ -4,16 +4,16 @@ VERSION ?= 2765.2.5
 DIGEST_URL ?= https://$(RELEASE).release.flatcar-linux.net/amd64-usr/$(VERSION)/flatcar_production_iso_image.iso.DIGESTS
 CONFIG ?= flatcar-linux-config.yml
 DISK_SIZE ?= 40000
-MEMORY ?= 2048M
+MEMORY ?= 2048
 BOOT_WAIT ?= 45s
 CT_DOWNLOAD_URL ?= https://github.com/coreos/container-linux-config-transpiler/releases/download
 CT_VER ?= v0.9.0
 ARCH ?= $(shell uname -m)
 HEADLESS ?= false
 
-flatcar-linux: builds/flatcar-linux-$(RELEASE).qcow2
+flatcar-linux: builds/flatcar-$(RELEASE)-$(VERSION)-virtualbox.box
 
-builds/flatcar-linux-$(RELEASE).qcow2:
+builds/flatcar-$(RELEASE)-$(VERSION)-virtualbox.box:
 	$(eval ISO_CHECKSUM := $(shell curl -s "$(DIGEST_URL)" | grep "flatcar_production_iso_image.iso" | awk '{ print length, $$1 | "sort -rg"}' | awk 'NR == 1 { print $$2 }'))
 
 	ct -pretty -in-file $(CONFIG) -out-file ignition.json

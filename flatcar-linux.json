@@ -1,27 +1,23 @@
 {
     "variables": {
-        "flatcar_channel": "alpha",
-        "flatcar_version": "current",
-        "iso_checksum": "",
-        "iso_checksum_type": "none",
+        "flatcar_channel": "stable",
+        "flatcar_version": "2765.2.5",
         "disk_size": "40000",
-        "memory": "2048M",
+        "memory": "2048",
         "boot_wait": "45s",
         "headless": "false"
     },
 
     "builders": [
         {
-            "type": "qemu",
-            "iso_url": "https://{{user `flatcar_channel` }}.release.flatcar-linux.net/amd64-usr/current/flatcar_production_iso_image.iso",
-            "iso_checksum": "{{ user `iso_checksum` }}",
-            "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+            "type": "virtualbox-iso",
+            "guest_os_type": "Linux_64",
+            "iso_url": "https://{{user `flatcar_channel` }}.release.flatcar-linux.net/amd64-usr/{{user `flatcar_version` }}/flatcar_production_iso_image.iso",
+            "iso_checksum": "file:https://{{user `flatcar_channel` }}.release.flatcar-linux.net/amd64-usr/{{user `flatcar_version` }}/flatcar_production_iso_image.iso.DIGESTS",
             "output_directory": "builds",
             "shutdown_command": "sudo shutdown now",
             "disk_size": "{{ user `disk_size` }}",
-            "format": "qcow2",
-            "accelerator": "kvm",
-            "vm_name": "flatcar-linux-{{user `flatcar_channel` }}.qcow2",
+            "memory": "{{ user `memory` }}",
             "boot_wait": "{{user `boot_wait` }}",
             "ssh_username": "core",
             "ssh_password": "packer",
@@ -31,9 +27,6 @@
                 "packer<enter>",
                 "packer<enter>",
                 "sudo systemctl start sshd.service<enter>"
-            ],
-            "qemuargs": [
-                [ "-m", "{{user `memory` }}" ]
             ]
         }
     ],
@@ -47,7 +40,7 @@
         {
             "type": "shell",
             "inline": [
-                "sudo flatcar-install -d /dev/vda -C {{ user `flatcar_channel` }} -i /tmp/ignition.json"
+                "sudo flatcar-install -d /dev/sda -V {{ user `flatcar_version` }} -C {{ user `flatcar_channel` }} -i /tmp/ignition.json"
             ]
         }
     ],

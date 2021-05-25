@@ -56,3 +56,7 @@ $ vagrant up --provider=libvirt
 
 This repository is based on other works such as https://github.com/dyson/packer-qemu-coreos-container-linux or https://github.com/bfraser/packer-coreos-qemu .
 
+## See also
+
+https://www.packer.io/docs/builders/virtualbox/iso
+https://www.packer.io/docs/post-processors/vagrant
