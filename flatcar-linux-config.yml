@@ -1,3 +1,11 @@
+systemd:
+  units:
+    # Disable Automatic Updates Daemon: https://kinvolk.io/docs/flatcar-container-linux/latest/setup/releases/update-strategies/#disable-automatic-updates-daemon
+    - name: update-engine.service
+      mask: true
+    - name: locksmithd.service
+      mask: true
+
 passwd:
   users:
     - name: core
