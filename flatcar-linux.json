@@ -4,7 +4,7 @@
         "flatcar_version": "2765.2.5",
         "disk_size": "40000",
         "memory": "2048",
-        "boot_wait": "45s",
+        "boot_wait": "25s",
         "headless": "false"
     },
 
