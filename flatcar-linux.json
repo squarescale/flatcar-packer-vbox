@@ -41,11 +41,19 @@
         },
         {
             "type": "shell",
-            "pause_after": "60s",
             "inline": [
                 "sudo flatcar-install -d /dev/sda -V {{ user `flatcar_version` }} -C {{ user `flatcar_channel` }} -i /tmp/ignition.json",
                 "sudo nohup shutdown -r now < /dev/null > /dev/null 2>&1 &",
                 "echo Rebooting...",
+                "exit 0"
+            ]
+        },
+        {
+            "type": "shell",
+            "pause_before": "60s",
+            "inline": [
+                "sudo nohup shutdown now < /dev/null > /dev/null 2>&1 &",
+                "echo Power off...",
                 "exit 0"
             ]
         }
