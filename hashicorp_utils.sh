@@ -25,6 +25,14 @@ sudo unzip -o -q -d /opt/bin /tmp/nomad.zip
 rm -f /tmp/nomad.zip
 echo Done
 
+echo "Installing CNI plugins ..."
+CNI_VERSION=0.9.1
+curl -s -L -o /tmp/cni-plugins.tgz https://github.com/containernetworking/plugins/releases/download/v${CNI_VERSION}/cni-plugins-linux-amd64-v${CNI_VERSION}.tgz
+sudo mkdir -p /opt/cni/bin
+sudo tar -C /opt/cni/bin -xzf /tmp/cni-plugins.tgz
+rm -f /tmp/cni-plugins.tgz
+echo Done
+
 echo -n "Installing Loki ..."
 curl -s -L -o /tmp/loki.zip https://github.com/grafana/loki/releases/download/v${LOKI_VERSION}/loki-linux-amd64.zip
 sudo unzip -o -q -d /opt/bin /tmp/loki.zip
