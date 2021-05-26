@@ -1,0 +1,15 @@
+[Unit]
+Description=Prometheus node exporter
+
+[Service]
+Type=simple
+ExecStart=/opt/bin/node_exporter \
+  --collector.systemd
+Restart=always
+
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target
+

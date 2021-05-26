@@ -1,0 +1,15 @@
+[Unit]
+Description=cAdvisor containers monitoring from Google
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+# Default port 8080 is already used by Goss
+ExecStart=/opt/bin/cadvisor -port 9101
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

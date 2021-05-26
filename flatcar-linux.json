@@ -49,8 +49,26 @@
             ]
         },
         {
-            "type": "shell",
+            "type": "file",
             "pause_before": "60s",
+            "source": "cadvisor",
+            "destination": "/tmp/cadvisor"
+        },
+        {
+            "type": "shell",
+            "script": "./hashicorp_utils.sh"
+        },
+        {
+            "type": "file",
+            "source": "node-exporter.service",
+            "destination": "/tmp/node-exporter.service"
+        },
+        {
+            "type": "shell",
+            "script": "./install_prom_exporters.sh"
+        },
+        {
+            "type": "shell",
             "inline": [
                 "sudo nohup shutdown now < /dev/null > /dev/null 2>&1 &",
                 "echo Power off...",
